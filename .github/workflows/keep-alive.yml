@@ -3,14 +3,15 @@
 # /health cada 10 minutos para que la app nunca encuentre el API dormido.
 #
 # - GitHub solo ejecuta los workflows programados desde la rama por defecto (main).
-# - Los cron de GitHub pueden retrasarse unos minutos en horas de mucha carga.
+# - Los cron de GitHub pueden retrasarse o saltarse en horas de mucha carga,
+#   sobre todo en minutos "redondos" (:00, :10…). Por eso corre en :03, :13, :23…
 # - GitHub los desactiva si el repo pasa 60 días sin commits: se reactivan en
 #   Actions → Keep Render awake → Enable workflow.
 name: Keep Render awake
 
 on:
   schedule:
-    - cron: "*/10 * * * *"
+    - cron: "3,13,23,33,43,53 * * * *"
   workflow_dispatch:
 
 jobs:
