@@ -25,6 +25,69 @@ npm run start:dev
 
 > npm 11 bloquea los *install scripts* de las dependencias por defecto. Los que hacen falta (`bcrypt`, `prisma`, `@prisma/client`, `@prisma/engines`) ya están aprobados en `allowScripts` dentro de `package.json`.
 
+## Base de datos local (sin Supabase)
+
+Para desarrollar sin conexión, o antes de tener el proyecto de Supabase, el repo trae una base PostgreSQL local con [PGlite](https://pglite.dev) (Postgres compilado a WebAssembly). Corre con Node: no hace falta instalar Postgres, Docker ni Homebrew. Es solo para desarrollo; en producción se usa Supabase.
+
+### 1. Apuntar el `.env` a la base local
+
+```env
+DATABASE_URL="postgresql://postgres:postgres@127.0.0.1:55432/postgres?sslmode=disable&pgbouncer=true&connection_limit=1"
+DIRECT_URL="postgresql://postgres:postgres@127.0.0.1:55432/postgres?sslmode=disable&connection_limit=1"
+```
+
+(`JWT_SECRET` y `JWT_REFRESH_SECRET` se completan igual que con Supabase.)
+
+### 2. Encender la base
+
+En una terminal aparte (queda ocupada mientras la base esté encendida):
+
+```bash
+npm run db:local
+```
+
+Está lista cuando aparece `PGLiteSocketServer listening on {"port":55432,...}`. Los datos se guardan en la carpeta `.pglite/` (ignorada por git), así que **se conservan al apagarla y volver a encenderla**.
+
+### 3. Primera vez: crear tablas y cargar datos
+
+Con la base encendida, en otra terminal:
+
+```bash
+npx prisma migrate deploy
+npx prisma db seed
+npm run start:dev
+```
+
+Las siguientes veces basta con `npm run db:local` y `npm run start:dev`.
+
+### 4. Apagar la base
+
+1. Detén primero el API (`Ctrl+C` en la terminal de `npm run start:dev`).
+2. Luego la base: `Ctrl+C` en la terminal de `npm run db:local`.
+
+Si la lanzaste en segundo plano o se te cerró la terminal:
+
+```bash
+lsof -i :55432 -sTCP:LISTEN -P     # ver qué proceso la tiene
+pkill -INT -f "pglite-server"      # apagarla
+```
+
+### Reiniciar desde cero
+
+Con la base apagada, borra la carpeta y repite el paso 3:
+
+```bash
+rm -rf .pglite
+```
+
+### Si la base se queda colgada
+
+PGlite atiende las conexiones de una en una. Si cortas un `migrate` o un `seed` a medias (por ejemplo con `Ctrl+C`), la base puede quedarse esperando y los comandos siguientes no terminan. Solución: apaga la base (`Ctrl+C`), vuelve a encenderla y repite el comando.
+
+### Alternativa: PostgreSQL de Homebrew
+
+Si prefieres un Postgres nativo: `brew install postgresql@16 && brew services start postgresql@16` para encenderlo y `brew services stop postgresql@16` para apagarlo. Crea la base con `createdb kusitrip` y usa `postgresql://<tu-usuario>@localhost:5432/kusitrip` en ambas variables (sin `pgbouncer=true`).
+
 ### Variables de entorno (`.env`)
 
 | Variable | Descripción |
@@ -198,6 +261,7 @@ prisma/
 | `npm run start:dev` | Corre en local con hot reload |
 | `npm run build` | Compila a `dist/` |
 | `npm run start:prod` | Corre el build compilado |
+| `npm run db:local` | Enciende la base PostgreSQL local (PGlite) en el puerto 55432 |
 | `npm run lint` | ESLint (`--fix`) |
 | `npm test` | Tests unitarios |
 | `npm run test:e2e` | Levanta la app y prueba `/health` (necesita `.env`) |

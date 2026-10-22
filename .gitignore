@@ -31,3 +31,6 @@ coverage/
 .eslintcache
 
 /generated/prisma
+
+# local PGlite database (npm run db:local)
+.pglite/

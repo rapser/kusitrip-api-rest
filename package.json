@@ -13,6 +13,7 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/src/main",
+    "db:local": "pglite-server --db=.pglite --port=55432 --max-connections=10",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -42,6 +43,7 @@
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
+    "@electric-sql/pglite-socket": "^0.2.14",
     "@eslint/eslintrc": "^3.2.0",
     "@eslint/js": "^9.18.0",
     "@nestjs/cli": "^11.0.0",
