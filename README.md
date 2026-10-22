@@ -15,6 +15,10 @@ El catálogo (destinos, actividades, fotos y opiniones) proviene de [civitatis.c
 
 ## Instalación
 
+> 📘 **Guía paso a paso para levantarlo en tu Mac:** [`docs/LEVANTAR-EN-LOCAL.md`](docs/LEVANTAR-EN-LOCAL.md). Explica cómo correrlo contra Supabase o contra una base local, la salida esperada de cada comando y cómo resolver los errores comunes.
+
+Resumen (ejecutar **dentro de la carpeta del proyecto**):
+
 ```bash
 npm install
 cp .env.example .env      # completa DATABASE_URL / DIRECT_URL / JWT secrets — ver abajo
