@@ -15,6 +15,10 @@ El catálogo (destinos, actividades, fotos y opiniones) proviene de [civitatis.c
 
 ## Instalación
 
+> 📘 **Guía paso a paso para levantarlo en tu Mac:** [`docs/LEVANTAR-EN-LOCAL.md`](docs/LEVANTAR-EN-LOCAL.md). Explica cómo correrlo contra Supabase o contra una base local, la salida esperada de cada comando y cómo resolver los errores comunes.
+
+Resumen (ejecutar **dentro de la carpeta del proyecto**):
+
 ```bash
 npm install
 cp .env.example .env      # completa DATABASE_URL / DIRECT_URL / JWT secrets — ver abajo
@@ -128,7 +132,8 @@ Usuarios demo:
    - **Branch:** `main`
    - **Root Directory:** vacío
    - **Runtime:** Node
-   - **Build Command:** `npm install && npm run build`
+   - **Build Command:** `npm install --include=dev && npm run build`
+     - El `--include=dev` es obligatorio. Con `NODE_ENV=production`, `npm install` omite las devDependencies, y el build necesita `@nestjs/cli` (el comando `nest`) y TypeScript. Sin él, el build falla con `sh: 1: nest: not found`.
    - **Start Command:** `npm run start:prod`
    - **Instance Type:** Free
 5. **Environment Variables:**
