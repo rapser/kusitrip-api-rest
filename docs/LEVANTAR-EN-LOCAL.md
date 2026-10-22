@@ -251,6 +251,8 @@ Ya hay otra instancia del API corriendo. Ver [Detener el API](#5-detener-el-api)
 
 ## Conectar la app iOS al API local
 
-En **Debug**, la app ya apunta a `http://localhost:3000` (build setting `API_BASE_URL`). Con el API corriendo, ejecuta la app en el simulador desde Xcode y entra con el usuario demo.
+En Xcode elige el scheme **KusiTrip-Dev**. Esa app (bundle `com.rapser.kusitrip.dev`, ícono con franja DEV) apunta a `http://localhost:3000`. Con el API corriendo, ejecútala en el simulador y entra con el usuario demo.
 
-En un iPhone físico, `localhost` es el propio teléfono: hay que usar la IP de tu Mac en la red (por ejemplo `http://192.168.1.20:3000`).
+El scheme **KusiTrip** es la app de producción y apunta a Render.
+
+En un iPhone físico, `localhost` es el propio teléfono: en `Configuration/Dev.xcconfig` de la app, cambia `API_BASE_URL` por la IP de tu Mac en la red (por ejemplo `http:/$()/192.168.1.20:3000`).
