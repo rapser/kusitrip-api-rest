@@ -15,34 +15,44 @@ El catálogo (destinos, actividades, fotos y opiniones) proviene de [civitatis.c
 
 ## Instalación
 
-> 📘 **Guía paso a paso para levantarlo en tu Mac:** [`docs/LEVANTAR-EN-LOCAL.md`](docs/LEVANTAR-EN-LOCAL.md). Explica cómo correrlo contra Supabase o contra una base local, la salida esperada de cada comando y cómo resolver los errores comunes.
+> 📘 **Guía paso a paso para levantarlo en tu Mac:** [`docs/LEVANTAR-EN-LOCAL.md`](docs/LEVANTAR-EN-LOCAL.md). Incluye la salida esperada de cada comando y cómo resolver los errores comunes.
 
-Resumen (ejecutar **dentro de la carpeta del proyecto**):
+Ejecutar **dentro de la carpeta del proyecto**:
 
 ```bash
 npm install
-cp .env.example .env      # completa DATABASE_URL / DIRECT_URL / JWT secrets — ver abajo
-npx prisma migrate deploy # crea las tablas en Supabase
-npx prisma db seed        # carga el catálogo de Civitatis + usuarios demo
-npm run start:dev
+cp .env.development.example .env.development   # base local; completa los JWT secrets
+cp .env.production.example .env.production     # Supabase; completa URLs y JWT secrets
 ```
 
 > npm 11 bloquea los *install scripts* de las dependencias por defecto. Los que hacen falta (`bcrypt`, `prisma`, `@prisma/client`, `@prisma/engines`) ya están aprobados en `allowScripts` dentro de `package.json`.
 
-## Base de datos local (sin Supabase)
+## Ambientes
 
-Para desarrollar sin conexión, o antes de tener el proyecto de Supabase, el repo trae una base PostgreSQL local con [PGlite](https://pglite.dev) (Postgres compilado a WebAssembly). Corre con Node: no hace falta instalar Postgres, Docker ni Homebrew. Es solo para desarrollo; en producción se usa Supabase.
+| Ambiente | Archivo | Base de datos | App iOS |
+|---|---|---|---|
+| **Development** | `.env.development` | PostgreSQL local (PGlite, carpeta `.pglite/`) | Scheme **KusiTrip-Dev** → `http://localhost:3000` |
+| **Production** | `.env.production` en tu Mac; variables del panel en Render | Supabase | Scheme **KusiTrip** → Render |
 
-### 1. Apuntar el `.env` a la base local
+- Los dos archivos están en `.gitignore`. En el repo solo se suben las plantillas `*.example`.
+- Cada script elige su archivo con [`dotenv-cli`](https://www.npmjs.com/package/dotenv-cli). Así Nest y el CLI de Prisma leen siempre el mismo ambiente.
+- Render no lee ningún archivo: `npm run start:prod` toma `DATABASE_URL`, `DIRECT_URL` y los JWT secrets de **Environment** en su panel.
+- `.env.production` sirve para migrar o sembrar Supabase (`npm run db:migrate:prod`, `npm run db:seed:prod`). También para correr el API de tu Mac contra Supabase (`npm run start:dev:prod`).
 
-```env
-DATABASE_URL="postgresql://postgres:postgres@127.0.0.1:55432/postgres?sslmode=disable&pgbouncer=true&connection_limit=1"
-DIRECT_URL="postgresql://postgres:postgres@127.0.0.1:55432/postgres?sslmode=disable&connection_limit=1"
+### Día a día (development)
+
+```bash
+npm run db:local     # Terminal 1: enciende la base local (queda ocupada)
+npm run start:dev    # Terminal 2: API en http://localhost:3000
 ```
 
-(`JWT_SECRET` y `JWT_REFRESH_SECRET` se completan igual que con Supabase.)
+La primera vez, con la base encendida, crea las tablas y carga los datos: `npm run db:migrate && npm run db:seed`.
 
-### 2. Encender la base
+## Base de datos local (PGlite)
+
+[PGlite](https://pglite.dev) es PostgreSQL compilado a WebAssembly. Corre con Node: no hace falta instalar Postgres, Docker ni Homebrew. Es solo para desarrollo; en producción se usa Supabase.
+
+### Encender la base
 
 En una terminal aparte (queda ocupada mientras la base esté encendida):
 
@@ -52,19 +62,16 @@ npm run db:local
 
 Está lista cuando aparece `PGLiteSocketServer listening on {"port":55432,...}`. Los datos se guardan en la carpeta `.pglite/` (ignorada por git), así que **se conservan al apagarla y volver a encenderla**.
 
-### 3. Primera vez: crear tablas y cargar datos
+### Primera vez: crear tablas y cargar datos
 
 Con la base encendida, en otra terminal:
 
 ```bash
-npx prisma migrate deploy
-npx prisma db seed
-npm run start:dev
+npm run db:migrate
+npm run db:seed
 ```
 
-Las siguientes veces basta con `npm run db:local` y `npm run start:dev`.
-
-### 4. Apagar la base
+### Apagar la base
 
 1. Detén primero el API (`Ctrl+C` en la terminal de `npm run start:dev`).
 2. Luego la base: `Ctrl+C` en la terminal de `npm run db:local`.
@@ -78,7 +85,7 @@ pkill -INT -f "pglite-server"      # apagarla
 
 ### Reiniciar desde cero
 
-Con la base apagada, borra la carpeta y repite el paso 3:
+Con la base apagada, borra la carpeta, enciéndela y vuelve a crear tablas y datos:
 
 ```bash
 rm -rf .pglite
@@ -90,14 +97,14 @@ PGlite atiende las conexiones de una en una. Si cortas un `migrate` o un `seed` 
 
 ### Alternativa: PostgreSQL de Homebrew
 
-Si prefieres un Postgres nativo: `brew install postgresql@16 && brew services start postgresql@16` para encenderlo y `brew services stop postgresql@16` para apagarlo. Crea la base con `createdb kusitrip` y usa `postgresql://<tu-usuario>@localhost:5432/kusitrip` en ambas variables (sin `pgbouncer=true`).
+Si prefieres un Postgres nativo: `brew install postgresql@16 && brew services start postgresql@16` para encenderlo y `brew services stop postgresql@16` para apagarlo. Crea la base con `createdb kusitrip` y usa `postgresql://<tu-usuario>@localhost:5432/kusitrip` en ambas variables de `.env.development` (sin `pgbouncer=true`).
 
-### Variables de entorno (`.env`)
+### Variables de entorno
 
 | Variable | Descripción |
 |---|---|
-| `DATABASE_URL` | Connection string del **Transaction pooler** de Supabase (puerto `6543`) con `?pgbouncer=true&connection_limit=1`. La usa la app en tiempo de ejecución |
-| `DIRECT_URL` | Connection string del **Session pooler** (puerto `5432`). La usa Prisma Migrate |
+| `DATABASE_URL` | Conexión que usa el API en tiempo de ejecución. En Supabase: **Transaction pooler** (puerto `6543`) con `?pgbouncer=true&connection_limit=1` |
+| `DIRECT_URL` | Conexión que usa Prisma Migrate. En Supabase: **Session pooler** (puerto `5432`) |
 | `JWT_SECRET` | Firma los access tokens. Generar con `openssl rand -hex 32` |
 | `JWT_REFRESH_SECRET` | Firma los refresh tokens. Generar igual, con otro valor |
 | `PORT` | Por defecto `3000` |
@@ -111,9 +118,9 @@ Si prefieres un Postgres nativo: `brew install postgresql@16 && brew services st
    - `DIRECT_URL` → mismo host, puerto **5432** (*Session pooler*).
    - Reemplaza `[YOUR-PASSWORD]` por la contraseña del paso 2.
    - No uses la *Direct connection* (`db.<ref>.supabase.co`) en `DIRECT_URL`: solo funciona por IPv6 y Render no tiene salida IPv6.
-4. Pega ambos valores en tu `.env`.
-5. `npx prisma migrate deploy` — crea las tablas. La migración inicial también activa **Row Level Security** en todas las tablas: Supabase expone el esquema `public` por su Data API (PostgREST) y sin RLS cualquiera con la `anon key` podría leer `users`. Prisma se conecta como `postgres`, que ignora RLS, así que el API no se ve afectado.
-6. `npx prisma db seed` — carga 8 categorías, 8 destinos, 31 actividades, 156 opiniones y 2 usuarios demo. Es idempotente (hace upsert), se puede volver a correr.
+4. Pega ambos valores en `.env.production`.
+5. `npm run db:migrate:prod` — crea las tablas en Supabase. La migración inicial también activa **Row Level Security** en todas las tablas: Supabase expone el esquema `public` por su Data API (PostgREST) y sin RLS cualquiera con la `anon key` podría leer `users`. Prisma se conecta como `postgres`, que ignora RLS, así que el API no se ve afectado.
+6. `npm run db:seed:prod` — carga 8 categorías, 8 destinos, 31 actividades, 156 opiniones y 2 usuarios demo. Es idempotente (hace upsert), se puede volver a correr.
 7. Verifica en Supabase → **Table Editor** que estén las tablas `users`, `refresh_tokens`, `categories`, `destinations`, `activities`, `reviews`, `favorites`, `bookings` y `_prisma_migrations`.
 
 Usuarios demo:
@@ -153,7 +160,7 @@ Alternativa: el repo incluye `render.yaml`, así que también se puede crear con
 ### Limitaciones del plan Free de Render
 
 - **Spin down por inactividad:** tras ~15 min sin tráfico la instancia se apaga y la siguiente request tarda 30-60 s. Por eso el app iOS usa un timeout de 90 s.
-- **Sin one-off jobs:** las migraciones nuevas se aplican desde tu máquina con `npx prisma migrate deploy` apuntando a Supabase.
+- **Sin one-off jobs:** las migraciones nuevas se aplican desde tu máquina con `npm run db:migrate:prod` (usa `.env.production`, que apunta a Supabase).
 - **Supabase Free** pausa el proyecto tras 7 días sin actividad; se reactiva desde el dashboard.
 
 ## Corriendo en desarrollo
@@ -263,15 +270,16 @@ prisma/
 
 | Comando | Descripción |
 |---|---|
-| `npm run start:dev` | Corre en local con hot reload |
+| `npm run start:dev` | API en local con hot reload, contra la base local (`.env.development`) |
+| `npm run start:dev:prod` | API en local con hot reload, contra Supabase (`.env.production`) |
 | `npm run build` | Compila a `dist/` |
-| `npm run start:prod` | Corre el build compilado |
+| `npm run start:prod` | Corre el build compilado (Render; variables del panel) |
 | `npm run db:local` | Enciende la base PostgreSQL local (PGlite) en el puerto 55432 |
+| `npm run db:migrate` / `db:migrate:prod` | Aplica las migraciones pendientes en la base local / en Supabase |
+| `npm run db:seed` / `db:seed:prod` | Carga el catálogo y los usuarios demo (idempotente) en la base local / en Supabase |
+| `npm run db:studio` / `db:studio:prod` | Abre Prisma Studio para navegar la base local / Supabase |
+| `npm run db:migration:new -- <nombre>` | Crea y aplica una migración nueva en la base local |
 | `npm run lint` | ESLint (`--fix`) |
 | `npm test` | Tests unitarios |
-| `npm run test:e2e` | Levanta la app y prueba `/health` (necesita `.env`) |
+| `npm run test:e2e` | Levanta la app y prueba `/health` (usa `.env.development`) |
 | `npm run docs:export` | Regenera `openapi.json` |
-| `npx prisma studio` | Navegar la base de datos |
-| `npx prisma migrate dev --name <nombre>` | Crear y aplicar una migración nueva |
-| `npx prisma migrate deploy` | Aplicar migraciones pendientes |
-| `npx prisma db seed` | Volver a cargar el catálogo (idempotente) |
