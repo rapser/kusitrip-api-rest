@@ -5,10 +5,10 @@ node_modules/
 dist/
 build/
 
-# env
+# env (solo se suben las plantillas *.example)
 .env
-.env.local
-.env.*.local
+.env.*
+!.env.*.example
 
 # logs
 logs/
