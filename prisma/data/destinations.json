@@ -1,0 +1,58 @@
+[
+  {
+    "id": "cusco", "name": "Cusco", "country": "Perú", "continent": "América",
+    "imageUrl": "https://f.civitatis.com/peru/cusco/cusco.jpg",
+    "activityCount": 105, "travelerCount": 257687, "reviewCount": 9976, "rating": 8.8,
+    "description": "Cusco es una de las ciudades más atractivas de Latinoamérica, donde la historia andina convive con la vida moderna. Fue la capital del Imperio inca antes de la llegada de los españoles y después se convirtió en una ciudad colonial. La temporada seca, de mayo a septiembre, es la mejor época para visitarla y, al estar a más de 3.300 metros de altitud, conviene aclimatarse con calma.",
+    "sortOrder": 1
+  },
+  {
+    "id": "lima", "name": "Lima", "country": "Perú", "continent": "América",
+    "imageUrl": "https://f.civitatis.com/peru/lima/lima.jpg",
+    "activityCount": 101, "travelerCount": 304616, "reviewCount": 9608, "rating": 9.0,
+    "description": "Lima es el corazón cultural y gastronómico del Perú, con calles llenas de vida, color y atardeceres sobre el Pacífico. Fundada en 1535 por Francisco Pizarro, es una ciudad de contrastes donde conviven el legado colonial, los vestigios preincas y la vida moderna de barrios como Miraflores y Barranco.",
+    "sortOrder": 2
+  },
+  {
+    "id": "arequipa", "name": "Arequipa", "country": "Perú", "continent": "América",
+    "imageUrl": "https://f.civitatis.com/peru/arequipa/arequipa.jpg",
+    "activityCount": 36, "travelerCount": 70319, "reviewCount": 3383, "rating": 8.7,
+    "description": "Arequipa, en el sur del Perú, destaca por su entorno de volcanes y por su centro histórico de sillar blanco. Su clima templado, su gastronomía y su cercanía al Cañón del Colca la convierten en un destino ideal tanto para la cultura como para la aventura.",
+    "sortOrder": 3
+  },
+  {
+    "id": "puno", "name": "Puno", "country": "Perú", "continent": "América",
+    "imageUrl": "https://f.civitatis.com/peru/puno/puno.jpg",
+    "activityCount": 25, "travelerCount": 16804, "reviewCount": 1166, "rating": 8.6,
+    "description": "Puno, a orillas del lago Titicaca, es el punto de partida para conocer las islas flotantes de los Uros, comunidades originarias y lugares cargados de historia. Su ambiente tranquilo y su cultura andina la convierten en un destino para quienes buscan experiencias auténticas.",
+    "sortOrder": 4
+  },
+  {
+    "id": "buenos-aires", "name": "Buenos Aires", "country": "Argentina", "continent": "América",
+    "imageUrl": "https://f.civitatis.com/argentina/buenos-aires/buenos-aires.jpg",
+    "activityCount": 159, "travelerCount": 702294, "reviewCount": 28537, "rating": 9.0,
+    "description": "Buenos Aires combina tango, historia y gastronomía en una capital con muchísimo por descubrir. Desde aquí se pueden hacer visitas guiadas y free tours por sus barrios más emblemáticos, como La Boca o San Telmo, y excursiones a las Cataratas de Iguazú o la Patagonia.",
+    "sortOrder": 5
+  },
+  {
+    "id": "rio-de-janeiro", "name": "Río de Janeiro", "country": "Brasil", "continent": "América",
+    "imageUrl": "https://f.civitatis.com/brasil/rio-de-janeiro/rio-de-janeiro.jpg",
+    "activityCount": 153, "travelerCount": 683414, "reviewCount": 18380, "rating": 8.8,
+    "description": "Río de Janeiro no es la capital de Brasil, pero sí una de sus ciudades más importantes. Es famosa por sus playas, su ambiente festivo al ritmo de la samba y sus iconos, como el Cristo Redentor y el Pan de Azúcar.",
+    "sortOrder": 6
+  },
+  {
+    "id": "cartagena-de-indias", "name": "Cartagena de Indias", "country": "Colombia", "continent": "América",
+    "imageUrl": "https://f.civitatis.com/colombia/cartagena-de-indias/cartagena-de-indias.jpg",
+    "activityCount": 127, "travelerCount": 467780, "reviewCount": 14648, "rating": 8.7,
+    "description": "Cartagena de Indias combina arquitectura colonial, playas caribeñas y una cultura vibrante. Su centro histórico amurallado y las islas y playas cercanas la convierten en un destino perfecto tanto para recorrer la ciudad como para hacer excursiones de un día.",
+    "sortOrder": 7
+  },
+  {
+    "id": "santiago-de-chile", "name": "Santiago de Chile", "country": "Chile", "continent": "América",
+    "imageUrl": "https://f.civitatis.com/chile/santiago-de-chile/santiago-de-chile.jpg",
+    "activityCount": 89, "travelerCount": 293838, "reviewCount": 13914, "rating": 8.8,
+    "description": "Santiago de Chile combina un rico patrimonio monumental con la cordillera de los Andes como telón de fondo. La capital ofrece opciones para todo tipo de viajeros, desde recorridos por el centro histórico hasta excursiones a la naturaleza, la costa y los viñedos.",
+    "sortOrder": 8
+  }
+]

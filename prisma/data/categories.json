@@ -1,0 +1,10 @@
+[
+  { "id": "guided", "name": "Visitas guiadas", "icon": "person.2", "sortOrder": 1 },
+  { "id": "free", "name": "Free Tours", "icon": "star.circle", "sortOrder": 2 },
+  { "id": "excursions", "name": "Excursiones", "icon": "bus", "sortOrder": 3 },
+  { "id": "adventure", "name": "Aventura y naturaleza", "icon": "figure.hiking", "sortOrder": 4 },
+  { "id": "gastronomy", "name": "Gastronomía", "icon": "fork.knife", "sortOrder": 5 },
+  { "id": "boat", "name": "Paseos en barco", "icon": "ferry", "sortOrder": 6 },
+  { "id": "tickets", "name": "Espectáculos y entradas", "icon": "ticket", "sortOrder": 7 },
+  { "id": "transport", "name": "Traslados", "icon": "car", "sortOrder": 8 }
+]
