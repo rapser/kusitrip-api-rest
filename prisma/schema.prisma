@@ -1,0 +1,171 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Supabase Postgres:
+// - DATABASE_URL -> Supavisor transaction pooler (port 6543, ?pgbouncer=true) used at runtime
+// - DIRECT_URL   -> Supavisor session pooler (port 5432) used by Prisma Migrate
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum BookingStatus {
+  confirmed
+  cancelled
+}
+
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  surname      String
+  email        String   @unique
+  passwordHash String
+  memberSince  DateTime @default(now())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  refreshTokens RefreshToken[]
+  favorites     Favorite[]
+  bookings      Booking[]
+  reviews       Review[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  userId    String
+  // SHA-256 of the token. bcrypt is not usable here: it ignores input past
+  // 72 bytes, and every JWT of a user shares its first 72 bytes.
+  tokenHash String   @unique
+  expiresAt DateTime
+  revoked   Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+model Category {
+  id        String @id
+  name      String
+  icon      String
+  sortOrder Int    @default(0)
+
+  activities Activity[]
+
+  @@map("categories")
+}
+
+model Destination {
+  id            String   @id
+  name          String
+  country       String
+  continent     String
+  imageUrl      String
+  activityCount Int
+  travelerCount Int
+  reviewCount   Int
+  rating        Float
+  description   String
+  sortOrder     Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  activities Activity[]
+
+  @@map("destinations")
+}
+
+model Activity {
+  id                   String   @id
+  slug                 String
+  destinationId        String
+  categoryId           String
+  title                String
+  summary              String
+  description          String
+  price                Decimal  @db.Decimal(10, 2)
+  originalPrice        Decimal? @db.Decimal(10, 2)
+  currency             String   @default("USD")
+  rating               Float
+  reviewCount          Int
+  travelerCount        Int
+  durationMinutes      Int
+  language             String
+  freeCancellationDays Int      @default(0)
+  meetingPoint         String
+  includes             String[]
+  imageUrls            String[]
+  isFeatured           Boolean  @default(false)
+  sourceUrl            String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  destination Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+  category    Category    @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  reviews     Review[]
+  favorites   Favorite[]
+  bookings    Booking[]
+
+  @@index([destinationId])
+  @@index([categoryId])
+  @@map("activities")
+}
+
+model Review {
+  id          String   @id @default(uuid())
+  activityId  String
+  userId      String?
+  authorName  String
+  city        String   @default("")
+  rating      Float
+  comment     String
+  travelType  String   @default("")
+  publishedAt DateTime @default(now())
+
+  activity Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  user     User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([activityId])
+  @@map("reviews")
+}
+
+model Favorite {
+  id         String   @id @default(uuid())
+  userId     String
+  activityId String
+  createdAt  DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activity Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, activityId])
+  @@map("favorites")
+}
+
+model Booking {
+  id             String        @id @default(uuid())
+  number         String        @unique
+  userId         String
+  activityId     String
+  activityTitle  String
+  activityDate   DateTime
+  numberOfPeople Int
+  unitPrice      Decimal       @db.Decimal(10, 2)
+  totalPrice     Decimal       @db.Decimal(10, 2)
+  currency       String
+  status         BookingStatus @default(confirmed)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activity Activity @relation(fields: [activityId], references: [id], onDelete: Restrict)
+
+  @@index([userId])
+  @@map("bookings")
+}
