@@ -16,11 +16,11 @@
     "start:prod": "node dist/src/main",
     "db:local": "pglite-server --db=.pglite --port=55432 --max-connections=10",
     "db:migrate": "dotenv -e .env.development -- prisma migrate deploy",
-    "db:seed": "dotenv -e .env.development -- prisma db seed",
+    "db:seed": "dotenv -e .env.development -- ts-node prisma/seed.ts",
     "db:studio": "dotenv -e .env.development -- prisma studio",
     "db:migration:new": "dotenv -e .env.development -- prisma migrate dev --name",
     "db:migrate:prod": "dotenv -e .env.production -- prisma migrate deploy",
-    "db:seed:prod": "dotenv -e .env.production -- prisma db seed",
+    "db:seed:prod": "dotenv -e .env.production -- ts-node prisma/seed.ts",
     "db:studio:prod": "dotenv -e .env.production -- prisma studio",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
@@ -28,8 +28,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "dotenv -e .env.development -- jest --config ./test/jest-e2e.json",
-    "docs:export": "ts-node -r tsconfig-paths/register scripts/export-openapi.ts",
-    "db:seed": "prisma db seed"
+    "docs:export": "ts-node -r tsconfig-paths/register scripts/export-openapi.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
