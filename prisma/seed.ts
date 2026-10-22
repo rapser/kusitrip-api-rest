@@ -80,12 +80,13 @@ const DEMO_USERS = [
   },
 ];
 
+/** Set SEED_DEMO_USERS=false to load only the catalog (e.g. in production). */
+const seedDemoUsers = process.env.SEED_DEMO_USERS !== 'false';
+
 const prisma = new PrismaClient();
 
 function load<T>(file: string): T {
-  return JSON.parse(
-    readFileSync(join(__dirname, 'data', file), 'utf-8'),
-  ) as T;
+  return JSON.parse(readFileSync(join(__dirname, 'data', file), 'utf-8')) as T;
 }
 
 async function main() {
@@ -127,7 +128,8 @@ async function main() {
     });
   }
 
-  for (const user of DEMO_USERS) {
+  const demoUsers = seedDemoUsers ? DEMO_USERS : [];
+  for (const user of demoUsers) {
     const passwordHash = await bcrypt.hash(user.password, 10);
     await prisma.user.upsert({
       where: { email: user.email },
@@ -143,7 +145,7 @@ async function main() {
 
   console.log(
     `Seeded ${categories.length} categories, ${destinations.length} destinations, ` +
-      `${activities.length} activities, ${reviews.length} reviews, ${DEMO_USERS.length} users`,
+      `${activities.length} activities, ${reviews.length} reviews, ${demoUsers.length} users`,
   );
 }
 

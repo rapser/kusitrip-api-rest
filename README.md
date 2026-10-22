@@ -16,6 +16,8 @@ El catálogo (destinos, actividades, fotos y opiniones) proviene de [civitatis.c
 ## Instalación
 
 > 📘 **Guía paso a paso para levantarlo en tu Mac:** [`docs/LEVANTAR-EN-LOCAL.md`](docs/LEVANTAR-EN-LOCAL.md). Incluye la salida esperada de cada comando y cómo resolver los errores comunes.
+>
+> 🚀 **Antes de publicar la app:** [`docs/SALIDA-A-PRODUCCION.md`](docs/SALIDA-A-PRODUCCION.md). Explica cómo limpiar los datos de prueba de Supabase, cambiar credenciales y qué exige la App Store.
 
 Ejecutar **dentro de la carpeta del proyecto**:
 
@@ -276,7 +278,7 @@ prisma/
 | `npm run start:prod` | Corre el build compilado (Render; variables del panel) |
 | `npm run db:local` | Enciende la base PostgreSQL local (PGlite) en el puerto 55432 |
 | `npm run db:migrate` / `db:migrate:prod` | Aplica las migraciones pendientes en la base local / en Supabase |
-| `npm run db:seed` / `db:seed:prod` | Carga el catálogo y los usuarios demo (idempotente) en la base local / en Supabase |
+| `npm run db:seed` / `db:seed:prod` | Carga el catálogo y los usuarios demo (idempotente) en la base local / en Supabase. Con `SEED_DEMO_USERS=false` carga solo el catálogo |
 | `npm run db:studio` / `db:studio:prod` | Abre Prisma Studio para navegar la base local / Supabase |
 | `npm run db:migration:new -- <nombre>` | Crea y aplica una migración nueva en la base local |
 | `npm run lint` | ESLint (`--fix`) |
