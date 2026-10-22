@@ -2,6 +2,10 @@
 # siguiente petición tarda ~90 s en despertarlo. Este workflow llama a
 # /health cada 10 minutos para que la app nunca encuentre el API dormido.
 #
+# Es el RESPALDO: el ping principal es un cronjob en cron-job.org
+# ("KusiTrip keep-alive", cada 10 min), que es puntual. Este workflow cubre
+# el caso de que aquel se desactive.
+#
 # - GitHub solo ejecuta los workflows programados desde la rama por defecto (main).
 # - Los cron de GitHub pueden retrasarse o saltarse en horas de mucha carga,
 #   sobre todo en minutos "redondos" (:00, :10…). Por eso corre en :03, :13, :23…

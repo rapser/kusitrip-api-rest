@@ -99,7 +99,7 @@ Si responde error, revisa en Render → **Logs** que las URLs no tengan comillas
 
 | Qué | Por qué |
 |---|---|
-| **Render Starter (US$ 7/mes)** | El servidor nunca se apaga. Con eso puedes desactivar el workflow `keep-alive.yml` (Actions → Keep Render awake → Disable workflow) o dejarlo como monitor |
+| **Render Starter (US$ 7/mes)** | El servidor nunca se apaga. Con eso ya no hacen falta los pings: borra el cronjob "KusiTrip keep-alive" en cron-job.org y desactiva el workflow `keep-alive.yml` (Actions → Keep Render awake → Disable workflow) |
 | **Backups de la base** | El plan gratis de Supabase no incluye backups automáticos descargables. El plan Pro tiene backups diarios. Como mínimo, haz un `pg_dump` periódico con la `DIRECT_URL` |
 | **Fotos del catálogo** | Hoy apuntan al CDN de Civitatis (`f.civitatis.com`). Para uso comercial hay que tener permiso o usar fotos propias, y servirlas desde Supabase Storage |
 | **Swagger (`/docs`)** | Hoy es público en producción. No expone datos (los endpoints privados piden token), pero puedes ocultarlo con una variable de entorno si prefieres no mostrar la API |
