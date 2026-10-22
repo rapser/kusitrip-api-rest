@@ -233,6 +233,16 @@ Contra Supabase es normal que tarde entre 1 y 3 minutos sin mostrar nada. Si pas
 
 No es un error. Prisma avisa de un cambio para su versión 7; el proyecto usa la 6. Se puede ignorar.
 
+### Render: `sh: 1: nest: not found`
+
+El build en Render instaló solo las dependencias de producción (en el log se ve `added 181 packages`). Pasa porque `NODE_ENV=production` hace que `npm install` omita las devDependencies, y `nest build` las necesita.
+
+En Render → **Settings → Build Command**:
+
+```
+npm install --include=dev && npm run build
+```
+
 ### `EADDRINUSE: address already in use :::3000`
 
 Ya hay otra instancia del API corriendo. Ver [Detener el API](#5-detener-el-api).
