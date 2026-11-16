@@ -162,6 +162,8 @@ Alternativa: el repo incluye `render.yaml`, así que también se puede crear con
 ### Limitaciones del plan Free de Render
 
 - **Spin down por inactividad:** tras ~15 min sin tráfico la instancia se apaga y la siguiente request tarda 30-60 s. Por eso el app iOS usa un timeout de 90 s.
+- **Keep-alive integrado:** la propia app llama a su URL pública (`RENDER_EXTERNAL_URL` + `/health`, que Render inyecta solo) cada 10 min, así que no se duerme mientras el proceso esté vivo ([`keep-alive.service.ts`](src/health/keep-alive.service.ts)). En local no hace nada. Variables opcionales: `KEEP_ALIVE_URL` (otra URL, u `off` para desactivarlo) y `KEEP_ALIVE_INTERVAL_MINUTES`. El workflow [`keep-alive.yml`](.github/workflows/keep-alive.yml) queda como respaldo para despertarla si se reinicia. No se usa cron-job.org: Render responde `429` a sus IPs, que comparten miles de usuarios.
+- **750 h/mes por cuenta:** un servicio despierto todo el mes gasta ~744 h, así que solo **un** servicio Free por cuenta puede mantenerse despierto.
 - **Sin one-off jobs:** las migraciones nuevas se aplican desde tu máquina con `npm run db:migrate:prod` (usa `.env.production`, que apunta a Supabase).
 - **Supabase Free** pausa el proyecto tras 7 días sin actividad; se reactiva desde el dashboard.
 
